@@ -1,5 +1,6 @@
 ---
 title: "Aula 1 - Primeiros passos no R"
+author: "Matheus C. Pestana (IESP-UERJ)"
 output: 
   html_notebook: 
     highlight: pygments
