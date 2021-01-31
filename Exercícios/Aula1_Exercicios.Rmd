@@ -1,0 +1,101 @@
+---
+title: "Aula 1 - Exercícios"
+author: "PREENCHA SEU NOME AQUI"
+output: html_notebook
+---
+
+# Exercício 1 - Pacotes
+
+### a) Instale o pacote ggthemes
+
+```{r}
+
+```
+
+### b) Carregue o pacote rio
+
+```{r}
+
+```
+
+
+# Exercício 2 - Objetos
+
+### a) Crie um vetor com os números de 1 a 100 (`?seq` ou : )
+
+```{r}
+
+```
+
+### b) Multiplique esse vetor por 2
+
+```{r}
+
+```
+
+### c) Crie três vetores: nome, idade e gênero. Em cada um deles, coloque pelo menos 10 itens.
+
+```{r}
+
+```
+
+### d) Crie um banco de dados com os vetores acima criados, sem repetir a criação do vetor. 
+
+```{r}
+
+```
+
+### e) Acesse o quinto item da terceira coluna. 
+
+```{r}
+
+```
+
+### f) Cole cada um dos nomes com a respectiva idade. O resultado deverá ser: "NOME tem IDADE anos"
+
+```{r}
+
+```
+
+# Exercício 3 - Exploração
+
+### a) Importe o arquivo "mtcars.fst" presente na pasta __Bancos__, para o objeto de nome "carros"
+
+```{r}
+
+```
+
+### b) Sumarize carros. Que conclusões você tira? Descubra o que cada variável significa usando ?mtcars
+
+```{r}
+?mtcars
+
+
+
+
+```
+
+### c) Dê um glimpse no banco carros. Quantas linhas e colunas ele tem? Quantos casos e variáveis?
+
+```{r}
+
+```
+
+### d) a variável MPG significa "milhas por galão". Converta para km/litro multiplicando por 0.425
+
+#### OBS: No R, o sistema de decimais é dado por um ponto, e não por vírgula.
+
+```{r}
+
+```
+
+# Exercício 4
+
+### Crie um banco com 5 candidatos presentes nas eleições de 2020, bastando o nome, o partido, o número e a UF. Salve esse banco em ".csv" usando a função `export()`. Salve para as próximas aulas. 
+
+```{r}
+?rio::export
+
+
+```
+
