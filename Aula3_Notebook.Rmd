@@ -175,7 +175,7 @@ ggplot(banco_completo, aes(x = soma_candidato))+
   geom_histogram(bins = 15, fill = "deepskyblue", color = "black", size = 0.4)+
   hrbrthemes::theme_ipsum_tw()+
   labs(title = "Histograma da distribuição de bens entre candidatos",
-       subtitle = "No Rio de Janeiro, entre PT e PSL",
+       subtitle = "No Rio de Janeiro, entre PT,PSL, DEM e PSOL",
        x = "Soma de bens", 
        y = "Contagem")
 ```
@@ -203,11 +203,11 @@ banco_completo %>%
              y = media, 
              fill = SG_PARTIDO)) +
   geom_col(show.legend = F) +
-  scale_fill_manual(values = c("orange", "firebrick")) +
+  scale_fill_manual(values = c("orange", "firebrick", "purple", "forestgreen")) +
   theme_minimal() +
   labs(
     title = "Média de bens entre candidatos",
-    subtitle = "PT e PSL do Rio de Janeiro",
+    subtitle = "PT,PSL, DEM e PSOL do Rio de Janeiro",
     x = "Partido",
     y = "Média do valor de bens",
     caption = "Fonte: TSE"
@@ -223,11 +223,11 @@ banco_completo %>%
   filter(soma_votos < 50000) %>% 
   ggplot(aes(x = soma_candidato, y = soma_votos, color = SG_PARTIDO))+
   geom_point()+
-  scale_color_manual(values = c("orange", "firebrick"))+
+  scale_color_manual(values = c("orange", "firebrick", "purple", "forestgreen")) +
   theme_minimal()+
   labs(color = "Partido",
        title = "Votos x Bens",
-       subtitle = "Entre PT e PSL, no Rio de Janeiro",
+       subtitle = "Entre PT, PSL, DEM e PSOL no Rio de Janeiro",
        x = "Valor total em bens",
        y = "Total de votos",
        caption = "Fonte: TSE")
@@ -243,10 +243,11 @@ banco_completo %>%
   ggplot(aes(x = soma_votos, fill = SG_PARTIDO))+
   geom_histogram(position = "dodge", bins = 5)+
   theme_minimal()+
-  scale_fill_manual(values = c("orange", "firebrick"))+
-  labs(title = "Distribuição de votos entre PT e PSL",
+  scale_fill_manual(values = c("orange", "firebrick", "purple", "forestgreen")) +
+  labs(title = "Distribuição de votos entre PT, PSL, DEM e PSOL",
        subtitle = "No Rio de Janeiro",
        x = "Nº de votos", 
        y = "Contagem", fill = "Partido")
 ```
 
+# Abram os exercícios da aula 3! 
