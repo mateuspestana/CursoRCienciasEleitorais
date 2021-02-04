@@ -1,0 +1,77 @@
+---
+title: "Aula 2 - Exercícios"
+author: "PREENCHA SEU NOME AQUI"
+output: html_notebook
+---
+
+# Exercício
+
+### a) Carregue os pacotes necessários
+
+```{r}
+pacman::p_load(tidyverse, rio)
+```
+
+### b) Abra o banco salvo na aula e batize-o como votacao_rio. Abra também o banco original.
+
+```{r}
+votacao_rio <- import("../PT_PSL_DEM_PSOL_Rio.csv", encoding = "Latin-1")
+```
+
+### c) Quantas variáveis temos no votacao_rio? Quantas observações? 
+
+```{r}
+glimpse(votacao_rio)
+```
+
+### d) Selecione apenas 6 variáveis que você considerar ESSENCIAIS para nossa análise. Lembrando: um banco filtrado é redundante em muitos aspectos. Escolha 6 variáveis que nos dêem o menor banco possível ao mesmo tempo que tenha o máximo de informações que podemos precisar. redirecione para votacao_rio, sobreescrevendo o objeto. Renomeie as variáveis para um nome que nos permita melhor compreensão das mesmas (mais curto e/ou mais objetivo).
+
+```{r}
+votacao_rio <- votacao_rio %>% 
+  select(NR_ZONA, NM_URNA_CANDIDATO, sequencial, SG_PARTIDO, DS_SIT_TOT_TURNO, QT_VOTOS_NOMINAIS)
+```
+
+### e) Rode o `summary()` do votacao_rio e do votacao_clean original. Qual/quais a/as diferença/as?
+
+```{r}
+summary(votacao_rio)
+summary(votacao_clean)
+```
+
+## Agora, leia a documentação da função `count()`, que aprofundaremos na próxima aula, e tente resolver os exercícios seguintes utilizando-a. Caso não consiga, use o que já sabe. 
+
+### f) Sabendo que o Rio tem 49 zonas eleitorais, quantos candidatos temos no total? E por partido?
+
+```{r}
+votacao_rio %>% 
+  count(NM_URNA_CANDIDATO) %>% 
+  count()
+```
+
+
+### f) Quantos temos dentre os eleitos por média? E por QP? E os não eleitos? E os suplentes?
+
+```{r}
+votacao_rio %>% 
+  count(DS_SIT_TOT_TURNO) %>% 
+  mutate(n = n/49)
+
+votacao_rio %>% 
+  filter(DS_SIT_TOT_TURNO == "ELEITO POR MÉDIA") %>% 
+ count(NM_URNA_CANDIDATO)
+
+votacao_rio %>% 
+  filter(DS_SIT_TOT_TURNO == "ELEITO POR QP") %>% 
+ count(NM_URNA_CANDIDATO)
+
+votacao_rio %>% 
+  filter(DS_SIT_TOT_TURNO == "NÃO ELEITO") %>% 
+ count(NM_URNA_CANDIDATO)
+
+votacao_rio %>% 
+  filter(DS_SIT_TOT_TURNO == "SUPLENTE") %>% 
+ count(NM_URNA_CANDIDATO)
+```
+
+
+## Na próxima aula, aprenderemos formas bem mais fáceis de fazer tudo isso. 

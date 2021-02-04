@@ -1,0 +1,254 @@
+---
+title: "Aula 2 - Iniciando nas Ciências Eleitorais"
+author: "Matheus C. Pestana (IESP-UERJ)"
+output: 
+  html_notebook: 
+    highlight: pygments
+    theme: cosmo
+---
+
+# Ciências Eleitorais / Ciências das Eleições 
+
+## O que são?
+
+Eu compreendo aqui as ciências eleitorais (*election sciences*) toda e qualquer análise eleitoral que se utilize de uma quantidade massiva de dados. Esse tipo de análise pode ser feito por software mais simples, como um SPSS ou Excel, mas quando utilizados métodos mais robustos, como modelos logísticos bayesianos hierárquicos, esses softwares ou são completamente incapazes de lidar com isso ou exigem manipulações tão complexas que torna o trabalho do pesquisador muito mais custoso. 
+
+Dessa forma, eu advogo pela utilização de linguagens como R, Python e Julia, por permitirem uma análise a nível de *big data*, ou seja, milhares ou milhões de casos. Quando executamos as técnicas aqui propostas, trabalhamos com esse nível, e os resultados são mais robustos e confiáveis, quando feitos por essas linguagens. 
+ 
+## Pra que servem? 
+
+As *Election Sciences* vão servir para diversos fins: 
+
+- Do ponto de vista acadêmico, a análise de *surveys* e resultados consolidados em série temporal, nos permitirão analisar o padrão de voto do eleitorado, a dominância de determinado partido/candidato em certas zonas, a tentativa de predição de quem será eleito e quem não será, dentre outros.
+
+- Do ponto de vista do mercado de consultoria, a análise das chances de um candidato de acordo com diversos fatores, como instrução, gasto de campanha, pautas, enfim, diversos resultados que permitem aumentar a chance de eleição.
+
+# Iniciando nas Ciências Eleitorais
+
+Parte do que foi visto acima está dentro do escopo do curso. Infelizmente, dada a limitação de tempo, não conseguiremos ver tudo. O objetivo principal é fornecer ao aluno um domínio básico do R para esse tipo de análise. Ou seja, não só aprenderemos o que eu chamo de __Ciências Eleitorais__ como também aprenderemos R. Assim, aprenderemos ao mesmo tempo como explorar os dados, criar gráficos e fazer inferências sobre o que observamos. Na aula passada, aprendemos o básico de importação, ponto necessário para trazermos os dados para o R, e hoje aprenderemos sobre a exploração desses dados. Em inglês, *EDA*, *Exploratory Data Analysis*. Esse é sempre o primeiro passo antes de construir qualquer coisa: observar o que os dados querem nos dizer. 
+
+## Importação
+
+Revisando a importação, para puxarmos o banco do TSE com o detalhamento de cada candidato em cada município/zona do Brasil em 2020, fazemos:
+
+```{r importacao}
+votacao <- import("Bancos/votacao_candidato_munzona_2020_RJ.csv", encoding = "Latin-1")
+```
+
+Ops! Deu erro! O que houve? O que faltou?
+
+```{r load_packages}
+library(rio)
+
+```
+
+## Pacman
+
+O pacote `pacman` nos permite carregar e baixar o pacotes do R. É semelhante à função `library()`, com um adendo: é possível carregar mais de um pacote por vez e, caso o pacote não esteja instalado, ele fará a instalação, tudo isso com a mesma função: `p_load()`. 
+
+```{r pacman, echo=TRUE}
+install.packages("pacman")
+pacman::p_load(rio, tidyverse, ggthemes)
+    ```
+
+## Importação e EDA
+
+Agora, conseguimos importar os dados: 
+
+```{r importacao2}
+votacao <- import("Bancos/votacao_candidato_munzona_2020_BRASIL.csv", encoding = "Latin-1")
+```
+
+A primeira coisa a fazermos é dar um `glimpse()` no banco, para entendermos o que ele possui:
+
+```{r}
+glimpse(votacao)
+```
+Como fizemos na aula naterior, podemos ver que o nosso banco tem 132604 linhas e 38 colunas. O comando `glimpse()` nos dá também quais as variáveis existem, de qual tipo são e os primeiros casos de cada uma delas. 
+
+No banco, temos 2 tipos de variáveis: `character` e `integer`. A primeira contém texto ou que pode ser entendido como tal: nome do partido, nome do candidato, sigla do partido, situação da eleição, etc. O segundo tipo é tudo aquilo que é número, no caso, inteiro. Temos também o tipo `double`, ainda não presente no banco, mas são valores com vírgula, fracionados, como visto na aula anterior. 
+
+As variáveis que temos podem ser encontradas no _README_ presente no arquivo baixado. 
+
+O banco pode ser um pouco pesado para alguns computadores menos potentes. No R, os bancos ficam instalados diretamente na memória RAM, uma "memória de curto prazo", onde todas as tarefas abertas ficam temporariamente disponíveis. 
+
+```{r}
+format(object.size(votacao), "Mb")
+```
+
+Na memória, o nosso banco está ocupando 289.4Mb. É pouco, mas podemos torná-lo menor para que nosso trabalho seja executado de forma mais eficiente. Para isso, vamos começar com os outros verbos do _Tidyverse_. Já vimos o `glimpse()`, e agora veremos o resto.
+
+## Verbos do Tidyverse
+
+### Select
+
+O segundo verbo a vermos é o `select()`, que faz o simples trabalho de __selecionar__ variáveis, ou excluí-la, do objeto que temos no R. Lembrando: o objeto está na memória RAM, logo, excluindo-o daqui não o removerá do arquivo, a não ser que salvemos o objeto novamente em algum formato. Algumas variáveis desse banco não nos serão úteis, como por exemplo, a data e a hora de geração, e as variáveis codificadas (iniciadas por CD_). Vamos removê-las. 
+
+A estrutura do `select()` é dada pelo seguinte:
+
+`select(nome_do_objeto, var1, var2, var3, var4)` para variáveis que queremos manter
+`select(nome_do_objeto, -var5, -var6, -var7)` para variáveis que queremos remover
+
+Notem que o primeiro argumento é `nome_do_objeto`, ou seja, é o nosso banco. Como vimos na aula anterior, o `%>%` direciona a saída do comando anterior a ele na entrada do comando posterior a ele. Logo, podemos escrever: 
+
+`nome_do_objeto %>% select(var1, var2, var3, var4)`. 
+
+Ambas as formas são possíveis e funcionais. Todavia, por questões de eficiência, ficaremos com a segunda.
+
+Algumas funções podem ser usadas em complementação ao `select()` na hora de escolhermos variáveis. 
+
+- `starts_with("prefixo")`
+- `ends_with("sufixo")`
+- `contains("palavra")`
+
+Logo, podemos criar um banco que contém só as variáveis que comecem com "NM_":
+
+```{r select_nm}
+votacao %>% 
+  select(starts_with("NM_"), NR_CANDIDATO) %>% 
+  glimpse()
+
+```
+
+Observem o empilhamento de funções! 
+
+Podemos excluir todas que começam com "CD_":
+
+```{r select_cd}
+votacao %>% 
+  select(-starts_with("CD_")) %>% 
+  glimpse()
+```
+
+No caso, não direcionei a saída desses comandos para nenhum objeto. Agora, faremos isso com o objetivo de gerar um banco mais limpo e fácil de ser trabalhado. 
+
+```{r new_votacao}
+votacao_clean <- votacao %>% 
+  select(-ends_with(c("GERACAO", "COLIGACAO")), 
+         -starts_with(c("CD_", "TP_")),
+         -contains("SITUACAO_CAND"),
+         -c(DS_COMPOSICAO_COLIGACAO, 
+            ST_VOTO_EM_TRANSITO, 
+            ANO_ELEICAO, 
+            NM_TIPO_ELEICAO,
+            NM_SOCIAL_CANDIDATO))
+
+glimpse(votacao_clean)
+
+rm(votacao)
+```
+
+Vamos olhar agora qual o tamanho do banco atual. O anterior pesava cerca de 280 Mb.
+
+```{r size_clean}
+format(object.size(votacao_clean), "Mb")
+```
+
+Ou seja, 171.7 Mb representa uma diminuição de 40,68% no tamanho do banco. Em termos de memória RAM, isso é significativo. 
+
+Se observarmos no _environment_, o nosso banco continua com 953105 observações, mas o número de variáveis diminuiu, de 38 para 18. Logo, o `select()` diminui o banco __horizontalmente__, ou seja, o torna mais __estreito__. 
+
+### Filter
+
+O nosso próximo verbo é o `filter()`. Ele é um pouco mais complexo que o `select()`, e funciona para filtrar casos, ou seja, mostrar apenas os casos que se enquadrem em determinada condição que estipularemos. 
+
+Mas antes... 
+
+#### O que é uma condição? 
+
+Lembram quando, na aula anterior, eu falei que existia o tipo de variável denominado *logical*, que pode ser __TRUE__ ou __FALSE__. Verdadeiro e falso são as saídas de uma condição. Se no R digitarmos:
+
+```{r equal_t}
+1 == 1
+```
+
+O resultado será verdadiero. O símbolo `==` significa "exatamente igual a" e não deve ser confundido com o `=` da matemática. O `==` representa uma condição e a saída sempre será Verdadeiro ou Falso, enquanto o `=` representa uma conta ou a criação de um objeto.
+
+```{r diff_f}
+5 != 5
+```
+
+Acima, pergunto ao R se 5 é diferente de 5, ao que ele afirma que não, não é (__FALSE__). O símbolo `!=` representa "diferente de".
+
+```{r maior_menor}
+5 > 2
+2 < 5
+
+5 >= 6
+6 <= 5
+```
+
+Acima, os comandos perguntam se 5 é maior que 2 e se 2 é menor que 5. Ambos são verdadeiros. 
+
+Assim, esses sinais são conhecidos como __operadores lógicos__ ou __operadores booleanos__, pois resultam sempre em VERDADEIRO ou FALSO. E é isso que usamos no filtro: filtramos por condições que saem como verdadeiras, exclusivamente. 
+
+#### Retornando ao filter()
+
+A sintaxe da função filter é a seguinte:
+
+`filter(nome_do_objeto, condicao)`. Adaptando isso para a sintaxe do tidyverse:
+
+`nome_do_objeto %>% filter(condicao)`
+
+A condição é representada, por sua vez, como a `variável operador_lógico condição`. 
+
+Vamos fazer alguns testes:
+
+```{r filtro_SP}
+votacao_clean %>% 
+  filter(SG_UF == "RJ") %>% 
+  glimpse()
+```
+Acima, filtramos dentro da variável SG_UF para os casos em que "SP" fosse verdadeiro. É possível perceber que o número de casos diminuiu: de 953105 para 237577. 
+
+Podemos fazer uma condição dupla, ou seja, podemos filtrar em duas variáveis. Isso pode ser feito pelos dois operadores: & e | ( __e__ e __ou__ ). O __e__ é uma considera ambas ao mesmo tempo, enquanto o __ou__ é um ou outro. Por exemplo, se quisermos filtrar os candidatos do DEM em Goiás: 
+
+```{r dem_go}
+votacao_clean %>% 
+  filter(SG_UF == "RJ" & SG_PARTIDO == "DEM") %>% 
+  glimpse()
+```
+
+
+E usando o OU:
+
+```{r dem_mdb_go}
+votacao_clean %>% 
+  filter(SG_UF == "RJ" & (SG_PARTIDO == "DEM" | SG_PARTIDO == "MDB")) %>% 
+  glimpse()
+
+votacao_clean %>% 
+  filter(SG_UF == "RJ" & SG_PARTIDO %in% c("DEM", "MDB") & QT_VOTOS_NOMINAIS >= 100) %>% 
+  glimpse()
+```
+
+Reparem, o número de variáveis se manteve, mas o número de casos mudou. O `filter()` muda o banco não mais horizontalmente, como o `select()`, mas __verticalmente__.
+
+### Rename
+
+Uma outra função-verbo pertencente ao `tidyverse` é o `rename()`, que nada mais é que uma função para renomear variáveis. Sua utilização é simples: a sintaxe é: `nome_do_objeto %>% rename("nome_novo_da_variavel" = nome_antigo_da_variavel)`. Vejamos um exemplo:
+
+```{r}
+votacao_clean %>% 
+  rename("sequencial" = SQ_CANDIDATO) %>% 
+  glimpse()
+
+votacao_clean %>% 
+  select("sequencial" = SQ_CANDIDATO, SG_UE, NR_CANDIDATO) %>% 
+  glimpse()
+```
+
+
+### Juntando as três funções:
+
+Para nosso exercício de casa, vamos criar um banco. Vamos filtrar todos os candidatos do RJ. Cada um deve escolher um município (tentem escolher diferentes) e, dentro desse município, um ou dois partidos de interesse. Eu escolherei o município do Rio e os partidos PT e PSL. Alterem também o nome da variável SQ_CANDIDATO para "sequencial" e SG_UE para "codigo_tse". Ao final, salvaremos o banco para fazermos os exercícios (função `export()`). Algumas linhas vocês não conhecerão e não entenderão agora, mas serão mencionadas na próxima aula. Alterem só o que estiver marcado.
+
+```{r}
+votacao_clean %>% 
+  filter(NM_UE == "RIO DE JANEIRO" & SG_PARTIDO %in% c("PT", "PSL", "DEM", "PSOL")) %>%  # Mudem aqui a cidade e o partido
+  mutate_at(vars(DS_CARGO, SG_PARTIDO, NM_PARTIDO, DS_SIT_TOT_TURNO, NR_ZONA), as.factor) %>%  # Não mudem
+  rename("sequencial" = SQ_CANDIDATO, "codigo_tse" = SG_UE) %>% # Renomear as variáveis
+  export("PT_PSL_DEM_PSOL_Rio.csv") # Mudem o nome do arquivo aqui. 
+```
+
+Abram agora o arquivo de exercícios e trabalhem com o banco salvo por vocês acima. 

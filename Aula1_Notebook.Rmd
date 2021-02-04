@@ -9,27 +9,27 @@ output:
 
 # Breve introdução ao R e RStudio
 
-O R é uma linguagem de programação criada em 1993 por **R**oss Ihaka e **R**obert Gentleman, baseada numa linguagem anterior, a **S**, que tem como foco a análise estatística e a exploração de dados, o que hoje chamamos de **ciência de dados**. 
+O R é uma linguagem de programação criada em 1993 por **R**oss Ihaka e **R**obert Gentleman, baseada numa linguagem anterior, a **S**, que tem como foco a análise estatística e a exploração de dados, o que hoje chamamos de **ciência de dados**.
 
-Por ser uma linguagem de programação em código aberto, com milhares de contribuidores voluntários, a linguagem **R**, tal como o Python, é amplamente utilizada e capaz de qualquer coisa (sendo limitada somente pela capacidade do usuário-programador), não somente ciência de dados. É possível criar robôs, escrever teses, desenvolver sites, criar imagens e desenvolver objetos em 3D. 
+Por ser uma linguagem de programação em código aberto, com milhares de contribuidores voluntários, a linguagem **R**, tal como o Python, é amplamente utilizada e capaz de qualquer coisa (sendo limitada somente pela capacidade do usuário-programador), não somente ciência de dados. É possível criar robôs, escrever teses, desenvolver sites, criar imagens e desenvolver objetos em 3D.
 
 O R, como dito, é uma linguagem: precisamos instalá-la para podermos redigir códigos e executar rotinas de scripts. Todavia, o R é "muito feio", se considerarmos aquela visualização original dele, que lembra um pouco um DOS ou um terminal. Aquilo é um console, onde cada código digitado é executado. Foi criado por J.J. Allaire em 2009 e funciona como uma IDE, ou *Integrated Development Environment*, Ambiente de Desenvolvimento Integrado. É uma visualização mais bonita do próprio R, com console, scripts, bases de dados, arquivos e gráficos, reunidos em uma mesma tela, facilitando assim a utilização. Esse é o aplicativo que será aberto **sempre**, nunca o R, e sim o RStudio.
 
 Embora utilizemos a interface do RStudio, sempre nos referiremos como R por ser o nome da linguagem.
 
-
 # Funções e Objetos
 
 Toda linguagem de programação possui duas dimensões essenciais ao funcionamento: objetos e funções.
 
-- Objeto é tudo aquilo que existe (bases de dados, vetores, tabelas)
-- Função é tudo aquilo que acontece (estruturas que executam uma função interna, ou seja, possuem uma **entrada** e uma **saída**)
+-   Objeto é tudo aquilo que existe (bases de dados, vetores, tabelas)
+-   Função é tudo aquilo que acontece (estruturas que executam uma função interna, ou seja, possuem uma **entrada** e uma **saída**)
 
-Entradas e saídas são conceitos importantes que precisam ser explicados, também. As entradas, ou *inputs*, são geralmente objetos que passarão por alguma transformação dentro da função e sairão mudados, sendo essa a **saída**, ou *output*. 
+Entradas e saídas são conceitos importantes que precisam ser explicados, também. As entradas, ou *inputs*, são geralmente objetos que passarão por alguma transformação dentro da função e sairão mudados, sendo essa a **saída**, ou *output*.
 
 O esquema seria:
 
 $$ Objeto_a \to Função_x \to Objeto_b$$
+
 Toda função tem uma saída, mas nem toda função possui uma entrada. Veremos isso ao longo do curso.
 
 Os objetos abertos aparecerão na aba *environment* aqui no RStudio. Para testar a inserção de um novo objeto, vamos executar, posicionando o cursor na linha (em qualquer parte dela, seja início ou fim) e apertando **CTRL + ENTER** (ou **CMD + ENTER** para usuários Mac):
@@ -37,17 +37,18 @@ Os objetos abertos aparecerão na aba *environment* aqui no RStudio. Para testar
 ```{r criando_objetos}
 nome <- "Matheus"
 cumprimento <- "Olá"
-```
+teste <- 123
+    ```
 
-Dois objetos foram criados: um cujo nome é *nome* e outro cujo nome é *cumprimento*. Elas tem os respectivos valores de "Matheus" e "Olá". Como são palavras, estão entre aspas, e isso é extremamente importante, como veremos logo a seguir. 
+Dois objetos foram criados: um cujo nome é *nome* e outro cujo nome é *cumprimento*. Elas tem os respectivos valores de "Matheus" e "Olá". Como são palavras, estão entre aspas, e isso é extremamente importante, como veremos logo a seguir.
 
 # Pacotes
 
-Pacotes são "bibliotecas" de funções. Quando instalamos um pacote novo, seria como se comprássemos livros, somando conhecimentos (novas funções) ao que temos. Como foi solicitado no email enviado antes, vocês instalaram alguns pacotes: electionsBR, Tidyverse, janitor e outros, que veremos ao longo do curso. Recapitulando, para instalar um pacote, utilizamos a seguinte estrutura: 
+Pacotes são "bibliotecas" de funções. Quando instalamos um pacote novo, seria como se comprássemos livros, somando conhecimentos (novas funções) ao que temos. Como foi solicitado no email enviado antes, vocês instalaram alguns pacotes: electionsBR, Tidyverse, janitor e outros, que veremos ao longo do curso. Recapitulando, para instalar um pacote, utilizamos a seguinte estrutura:
 
 `install.packages("NOME_DO_PACOTE")`
 
-Abaixo, o exemplo do código para instalarmos um pacote chamado "rio", que permite importar e exportar bases de dados de todos os formatos possíveis: SPSS, Stata, Excel, CSV, JSON, ODS, 
+Abaixo, o exemplo do código para instalarmos um pacote chamado "rio", que permite importar e exportar bases de dados de todos os formatos possíveis: SPSS, Stata, Excel, CSV, JSON, ODS,
 
 ```{r instalando_rio}
 install.packages("rio")
@@ -55,9 +56,9 @@ install.packages("rio")
 
 Importante perceber o seguinte: o nome do pacote sempre vem entre aspas. No R, se algo está entre aspas, é porque ou é uma palavra (ou seja, não é um objeto) ou é algo externo a ele (um site, ou um pacote que ainda não temos).
 
-Para carregar um pacote, a função se dá por `library(NOME_DO_PACOTE)`. Sem aspas, pois já o temos instalado! Só podemos carregar se ele já estiver instalado. Logo, instalamos uma vez e carregamos TODA vez que formos utilizá-lo. Isso seria equivalente, retornando à analogia do "comprar um livro", a abrir o livro para, enfim, lê-lo. 
+Para carregar um pacote, a função se dá por `library(NOME_DO_PACOTE)`. Sem aspas, pois já o temos instalado! Só podemos carregar se ele já estiver instalado. Logo, instalamos uma vez e carregamos TODA vez que formos utilizá-lo. Isso seria equivalente, retornando à analogia do "comprar um livro", a abrir o livro para, enfim, lê-lo.
 
-O pacote rio, como suporta muitos formatos de arquivo. Para instalar esses formatos (o rio só serve como um atalho), é preciso rodar a função `install_formats()`. Ela só precisa rodar uma vez, e depois nunca mais. Isso instalará os pacotes dos formatos externos (como ODS). Provavelmente, antes de rodá-lo, aparecerá um erro que ao final afirma: *Use 'install_formats()' to install them*. Eis um exemplo de função que não possui entrada, apenas saída. 
+O pacote rio, como suporta muitos formatos de arquivo. Para instalar esses formatos (o rio só serve como um atalho), é preciso rodar a função `install_formats()`. Ela só precisa rodar uma vez, e depois nunca mais. Isso instalará os pacotes dos formatos externos (como ODS). Provavelmente, antes de rodá-lo, aparecerá um erro que ao final afirma: *Use 'install_formats()' to install them*. Eis um exemplo de função que não possui entrada, apenas saída.
 
 ```{r carregando_rio}
 library(rio)
@@ -66,7 +67,7 @@ install_formats()
 
 # Ainda sobre funções
 
-Como percebemos, as entradas ficam dentro dos parênteses e as saídas aparecem no terminal/console. 
+Como percebemos, as entradas ficam dentro dos parênteses e as saídas aparecem no terminal/console.
 
 Se formos rodar os objetos, bastará digitar o nome do objeto, que o valor será apresentado no console:
 
@@ -81,21 +82,20 @@ nome
 Podemos usar uma função chamada `paste()` para "colar" esses dois objetos, já que eles são palavras, e formar uma frase só. Esse seria um exemplo de função com entradas:
 
 ```{r paste_nome}
-paste(cumprimento, nome)
+paste(cumprimento, nome, "Pestana", 22)
 ```
 
 Como você acha que será a saída desse comando? E onde ela aparecerá? Execute.
 
-# Pedindo ajuda 
+# Pedindo ajuda
 
-Uma forma de pedir ajuda é usando o Google, o StackOverflow e outros sites. Lá, diversas pessoas já se depararam com o mesmo problema que você passará. 
+Uma forma de pedir ajuda é usando o Google, o StackOverflow e outros sites. Lá, diversas pessoas já se depararam com o mesmo problema que você passará.
 
 Uma forma de você pedir ajuda também é pelo próprio R, através da sua decumentação. Para isso, basta digitar um ponto de interrogação antes de uma função, que a documentação abrirá. Analise a documentação da função `paste()` vista acima:
 
 ```{r}
 ?paste()
 ```
-
 
 # R como calculadora
 
@@ -131,17 +131,17 @@ Como vimos acima, é possível usar funções dentro de funções, o que nos per
 
 # Tipos de objetos
 
-Os objetos podem ser de diversos tipos, mas os três principais são: *vetores, dataframes* e *listas*, em ordem de complexidade. 
+Os objetos podem ser de diversos tipos, mas os três principais são: *vetores, dataframes* e *listas*, em ordem de complexidade.
 
 ## Vetores
 
-Os objetos que criamos acima eram vetores com um único item. Vetores possuem uma só dimensão e de uma só classe/tipo, que pode ser *integer, double, character* e *logical*. Podemos ter um vetor com vários itens quando utilizamos a função *combine*, que é dada por `c()`. 
+Os objetos que criamos acima eram vetores com um único item. Vetores possuem uma só dimensão e de uma só classe/tipo, que pode ser *integer, double, character* e *logical*. Podemos ter um vetor com vários itens quando utilizamos a função *combine*, que é dada por `c()`.
 
 ```{r vetor_integer}
 muitos_itens <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1)
 ```
 
-Qual o tipo do vetor acima? 
+Qual o tipo do vetor acima?
 
 ```{r type1}
 typeof(muitos_itens)
@@ -150,17 +150,26 @@ typeof(muitos_itens)
 Qual o tipo dos objetos criados anteriormente (nome e cumprimento)?
 
 ```{r tipos}
-
+typeof(nome)
+typeof(cumprimento)
+typeof(resultado)
 ```
-
 
 Qual o tipo do número 900?
 
 ```{r type900}
-# Fazer
+typeof(900) # Comentário
 ```
 
-Os tipos enquadrados como *logical* são o que chamamos de booleanos, podendo adquirir dois valores possíveis: `TRUE` ou `FALSE`, podendo ser resumido no R por `T` e `F`, respectivamente. Como são tipos próprios, nào precisam de aspas. 
+Os tipos enquadrados como *logical* são o que chamamos de booleanos, podendo adquirir dois valores possíveis: `TRUE` ou `FALSE`, podendo ser resumido no R por `T` e `F`, respectivamente. Como são tipos próprios, nào precisam de aspas.
+
+```{r}
+typeof(TRUE)
+typeof(FALSE)
+typeof(T)
+typeof(F)
+```
+
 
 # Indexando
 
@@ -168,37 +177,46 @@ Como temos um vetor com muitos itens, podemos extrair cada item por indexação 
 
 ```{r index1}
 muitos_itens[1]
+muitos_itens[11]
 muitos_itens[-11]
 muitos_itens[1:12]
+1:5
+
+vetor_confuso <- c("Oi", "Mateus", 123)
 ```
 
-O que significa o que está dentro dos `[ ]` ? 
+O que significa o que está dentro dos `[ ]` ?
 
-## Dataframes 
+## Dataframes
 
 Dataframes são estruturas com duas dimensões. Em resumo, linhas e colunas. Um dataframe é chamado de `tidy` quando cada linha dele representa um caso analisado, e cada coluna, uma variável, que adjetiva aquele caso em algum aspecto. Por exemplo, podemos ter um banco em que cada linha é um aluno com as seguintes variáveis:
 
-- Matrícula
-- Nome
-- Gênero
-- Idade
-- Curso
-- Período atual
+-   Matrícula
+-   Nome
+-   Gênero
+-   Idade
+-   Curso
+-   Período atual
 
 Para criar um dataframe no R, podemos usar a função `data.frame()`:
 
 ```{r df}
-alunos <- data.frame(matricula = c(20122530001, 20201530022, 2017243005),
-                     nome = c("Matheus", "Isabela", "Priscila"),
-                     gênero = c("M", "F", "F"),
-                     idade = c(27, 18, 26),
-                     curso = rep("Ciência Política", 3),
-                     periodo = c("Formado", "2", "7"))
+
+matricula = c(20122530001, 20201530022, 2017243005)
+nome = c("Matheus", "Isabela", "Priscila")
+genero = c("M", "F", "F")
+idade = c(27, 18, 26)
+curso = rep("Ciência Política", 3)
+periodo = c("Formado", "2", "7")
+
+alunos <- data.frame(matricula, nome,
+                     genero, idade,
+                     curso, periodo)
 
 alunos
 ```
 
-O que podemos perceber nos comandos acima? 
+O que podemos perceber nos comandos acima?
 
 Para encontrarmos um item qualquer dentro de um banco de dados, pela sua posição, também podemos usar a forma de indexação:
 
@@ -206,12 +224,13 @@ Para encontrarmos um item qualquer dentro de um banco de dados, pela sua posiç�
 alunos[1,2]
 alunos[2, ]
 alunos[ ,3]
-```
 
+alunos$periodo
+```
 
 ## Listas
 
-O diferencial das listas é que, se enquanto nos vetores precisamos ter na única dimensão uma mesma classe para todos os itens, e no dataframe podemos ter mistos, mas cada variável precisa ser da mesma classe, nas listas, podemos combinar as duas coisas. Uma lista possui itens em qualquer formato, sejam eles vetores, dataframes ou ambos. Podemos inserir até mesmo listas dentro de listas! 
+O diferencial das listas é que, se enquanto nos vetores precisamos ter na única dimensão uma mesma classe para todos os itens, e no dataframe podemos ter mistos, mas cada variável precisa ser da mesma classe, nas listas, podemos combinar as duas coisas. Uma lista possui itens em qualquer formato, sejam eles vetores, dataframes ou ambos. Podemos inserir até mesmo listas dentro de listas!
 
 ```{r lista}
 lista <- list(alunos, muitos_itens, nome, cumprimento)
@@ -219,39 +238,38 @@ lista <- list(alunos, muitos_itens, nome, cumprimento)
 lista
 ```
 
-
 O que podemos perceber na lista quando a executamos? O que vemos quando clicamos nela no *environment*?
 
+# Exploração inicial os dados
 
-# Exploração inicial os dados 
+## Tidyverse
 
-## Tidyverse 
+Para iniciar a exploração, será preciso carregar o pacote `tidyverse`. O que é o `tidyverse`?
 
-Para iniciar a exploração, será preciso carregar o pacote `tidyverse`. O que é o `tidyverse`? 
+O tidyverse é um guarda-chuva de pacotes, acumulando pacotes dentro de si que executam as mais diversas funções:
 
-O tidyverse é um guarda-chuva de pacotes, acumulando pacotes dentro de si que executam as mais diversas funções: 
+-   criação de gráficos: ggplot2
+-   manipulação de bancos: dplyr
+-   corrigir bancos: tidyr
+-   criar bancos: tibble
+-   mexer com datas: lubridate
+-   ler bancos: readr
+-   criar funções complexas de mapeamento: purrr
+-   mexer com strings: stringr
+-   raspar dados: rvest
+-   manipular fatores: forcats
+-   dentre muitos outros (27 pacotes no total)
 
-- criação de gráficos: ggplot2
-- manipulação de bancos: dplyr
-- corrigir bancos: tidyr
-- criar bancos: tibble
-- mexer com datas: lubridate
-- ler bancos: readr
-- criar funções complexas de mapeamento: purrr
-- mexer com strings: stringr
-- raspar dados: rvest
-- manipular fatores: forcats
-- dentre muitos outros (27 pacotes no total)
+O tidyverse insere uma nova maneira de lidar com o R também, que facilitou muito a sua disseminação nas Ciências Sociais e Humanas, cujos profissionais não tinham tantos conhecimentos (ou nenhum) de programação: o *pipe* `%>%`
 
-O tidyverse insere uma nova maneira de lidar com o R também, que facilitou muito a sua disseminação nas Ciências Sociais e Humanas, cujos profissionais não tinham tantos conhecimentos (ou nenhum) de programação: o *pipe* `%>%` 
-
-O ` %>%` direciona a saída da função anterior a ele na entrada (primeiro argumento) da função seguinte. Um exemplo:
+O `%>%` direciona a saída da função anterior a ele na entrada (primeiro argumento) da função seguinte. Um exemplo:
 
 ```{r pipe}
-library(tidyverse, verbose = F)
+library(tidyverse)
 nome %>% 
   rep(3)
 ```
+
 Qual foi a saída?
 
 Eu poderia ter digitado:
@@ -260,34 +278,34 @@ Eu poderia ter digitado:
 rep(nome, 3)
 ```
 
-Mas esse é só um exemplo bem simples, com uma só função. Quando empilhamos funções, o *pipe* se torna muito útil. 
+Mas esse é só um exemplo bem simples, com uma só função. Quando empilhamos funções, o *pipe* se torna muito útil.
 
-Além do *pipe*, o tidyverse incorpora diversas funções para bancos (a partir do **dplyr***) que são verbos, iguais aos em inglês, que tornam muito mais objetivo e claro o que o R deve fazer para o usuário. Alguns verbos:
+Além do *pipe*, o tidyverse incorpora diversas funções para bancos (a partir do **dplyr**\*) que são verbos, iguais aos em inglês, que tornam muito mais objetivo e claro o que o R deve fazer para o usuário. Alguns verbos:
 
-- mutate
-- filter
-- summarise
-- glimpse
-- count
-- group_by
-- select
-- dentre outros
+-   mutate
+-   filter
+-   summarise
+-   glimpse
+-   count
+-   group_by
+-   select
+-   dentre outros
 
 ## Importando dados
 
-Para importarmos os dados do R, temos diversas funções, geralmente iniciadas com `read_` ou `read.`, seguido pelo nome do formato ou do programa que o abre. Por exemplo, se quiséssemos abrir um arquivo chamado `file.csv`, poderíamos usar `read.csv("file.csv")`. Se fosse um excel, usaríamos `read_excel("arquivo.xlsx")`, e assim sucessivamente. Dois pontos são importantes de serem observados aqui: 
+Para importarmos os dados do R, temos diversas funções, geralmente iniciadas com `read_` ou `read.`, seguido pelo nome do formato ou do programa que o abre. Por exemplo, se quiséssemos abrir um arquivo chamado `file.csv`, poderíamos usar `read.csv("file.csv")`. Se fosse um excel, usaríamos `read_excel("arquivo.xlsx")`, e assim sucessivamente. Dois pontos são importantes de serem observados aqui:
 
-- Se rodarmos a função sem direcionar para um objeto, o banco não aparecerá no *environment*
+-   Se rodarmos a função sem direcionar para um objeto, o banco não aparecerá no *environment*
 
-- São muitas funções para decorar, então é melhor usar o `import()` do pacote `rio` para isso.
+-   São muitas funções para decorar, então é melhor usar o `import()` do pacote `rio` para isso.
 
-Vamos abrir os dados do TSE, de votação nominal por município e zona. 
+Vamos abrir os dados do TSE, de votação nominal por município e zona.
 
 ```{r import}
 votacao <- import("Bancos/votacao_candidato_munzona_2020_BRASIL.csv", encoding = "Latin-1")
 ```
 
-O argumento `encoding = "Latin-1"` é um parâmetro dentro da função, que indica a codificação dos dados do TSE. Isso faz com que textos saiam com acentos, sinais, cedilha, e etc. Usar Latin-1 é péssimo pois a compatibilidade é ínfima. 
+O argumento `encoding = "Latin-1"` é um parâmetro dentro da função, que indica a codificação dos dados do TSE. Isso faz com que textos saiam com acentos, sinais, cedilha, e etc. Usar Latin-1 é péssimo pois a compatibilidade é ínfima.
 
 Se digitarmos o nome do objeto `votacao`, o banco de dados aparecerá resumido no console:
 
@@ -298,7 +316,7 @@ votacao
 Para vermos só os primeiros casos:
 
 ```{r head}
-head(votacao)
+head(votacao, 3)
 ```
 
 A primeira função do tidyverse que aprenderemos é o `glimpse()`, que permite vislumbrar o banco de dados:
@@ -319,11 +337,8 @@ Se quisermos olhar uma variável específica, por exemplo, `SG_PARTIDO`, podemos
 votacao$SG_PARTIDO
 ```
 
-Atentem que o R já tenta autocompletar o nome da variável. 
+Atentem que o R já tenta autocompletar o nome da variável.
 
-***
+------------------------------------------------------------------------
 
-## Agora, abram o arquivo de exercícios da aula 1! 
-
-
-
+## Agora, abram o arquivo de exercícios da aula 1!

@@ -1,0 +1,123 @@
+---
+title: "Aula 1 - Exercícios"
+author: "Gabarito"
+output: html_notebook
+---
+
+# Exercício 1 - Pacotes
+
+### a) Instale o pacote ggthemes
+
+```{r echo=TRUE}
+install.packages("ggthemes")
+```
+
+### b) Carregue o pacote rio
+
+```{r}
+library(rio)
+# ou
+pacman::p_load(rio)
+```
+
+
+# Exercício 2 - Objetos
+
+### a) Crie um vetor com os números de 1 a 100 (`?seq` ou : )
+
+```{r}
+vetor <- 1:100
+vetor2 <- seq(1,100,1)
+vetor
+```
+
+### b) Multiplique esse vetor por 2
+
+```{r}
+vetor * 2 
+
+vetor3 <- seq(2, 200, 2)
+```
+
+### c) Crie três vetores: nome, idade e gênero. Em cada um deles, coloque pelo menos 10 itens.
+
+```{r}
+nome <- c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J")
+idade <- c(18:27)
+genero <- c(rep("Masculino", 5), rep("Feminino", 5))
+```
+
+### d) Crie um banco de dados com os vetores acima criados, sem repetir a criação do vetor. 
+
+```{r}
+banco <- data.frame(nome, idade, genero)
+```
+
+### e) Acesse o quinto item da terceira coluna. 
+
+```{r}
+banco[5,3]
+```
+
+### f) Cole cada um dos nomes com a respectiva idade. O resultado deverá ser: "NOME tem IDADE anos"
+
+```{r}
+paste(nome, "tem", idade, "anos")
+```
+
+# Exercício 3 - Exploração
+
+### a) Importe o arquivo "mtcars.fst" presente na pasta __Bancos__, para o objeto de nome "carros"
+
+```{r}
+getwd()
+setwd("~/Documents/Datasets/CiênciasEleitorais/Bancos")
+carros <- import("~/Documents/Datasets/CiênciasEleitorais/Bancos/mtcars.fst")
+```
+
+### b) Sumarize carros. Que conclusões você tira? Descubra o que cada variável significa usando ?mtcars
+
+```{r}
+?mtcars
+
+summary(carros)
+
+```
+
+### c) Dê um glimpse no banco carros. Quantas linhas e colunas ele tem? Quantos casos e variáveis?
+
+```{r}
+library(tidyverse)
+glimpse(carros)
+```
+
+### d) a variável MPG significa "milhas por galão". Converta para km/litro multiplicando por 0.425
+
+#### OBS: No R, o sistema de decimais é dado por um ponto, e não por vírgula.
+    
+```{r}
+carros$mpg * 0.425
+```
+
+# Exercício 4
+
+### Crie um banco com 5 candidatos presentes nas eleições de 2020, bastando o nome, o partido, o número e a UF. Salve esse banco em ".csv" usando a função `export()`. Salve para as próximas aulas. 
+
+```{r}
+?rio::export
+
+data.frame(NM_URNA_CANDIDATO = c("TARCISIO MOTTA", "CESAR MAIA", "TAINÁ DE PAULA", "VERÔNICA COSTA", "WILLIAM SIRI"),
+                         SG_PARTIDO = c("PSOL", "DEM", "PT", "DEM", "PSOL"),
+                         NR_CANDIDATO = c(50123, 25500, 13777, 25002, 50222),
+                         SG_UF = rep("RJ", 5)) %>% 
+  export("candidatos_banco.csv")
+
+eleicao <-  data.frame(NM_URNA_CANDIDATO = c("TARCISIO MOTTA", "CESAR MAIA", "TAINÁ DE PAULA", "VERÔNICA COSTA", "WILLIAM SIRI"),
+                         SG_PARTIDO = c("PSOL", "DEM", "PT", "DEM", "PSOL"),
+                         NR_CANDIDATO = c(50123, 25500, 13777, 25002, 50222),
+                         SG_UF = rep("RJ", 5))
+
+export(eleicao, "candidatos_banco.csv")
+
+```
+

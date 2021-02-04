@@ -1,0 +1,252 @@
+---
+title: "Aula 3 - Novos Verbos e Gráficos"
+author: "Matheus C. Pestana (IESP-UERJ)"
+output: 
+  html_notebook: 
+    highlight: pygments
+    theme: cosmo
+---
+
+# Contando histórias a partir dos dados
+
+Dados nos contam histórias, e as ciências eleitorais nos contarão histórias sobre políticas, candidatos, votações, perfis de eleitorado, etc. Hoje, aprenderemos novos verbos do `tidyverse` que nos permitirão total autonomia na manipulação de bases de dados, e também iniciaremos o aprendizado de gráficos. 
+
+### Importando o novo banco
+
+Vamos carregar os pacotes necessários:
+
+```{r pacman}
+pacman::p_load(rio, tidyverse)
+```
+
+E agora, importaremos o banco de bens, além de abrir o nosso banco padrão, criado no exercício. 
+
+```{r}
+votacao <- import("PT_PSL_DEM_PSOL_Rio.csv", encoding = "Latin-1")
+bens <- import("Bancos/bem_candidato_2020_RJ.csv", encoding = "Latin-1")
+```
+
+O que temos no banco de bens?
+```{r}
+glimpse(bens)
+```
+
+## Novos Verbos
+
+Hoje, aprenderemos novos verbos: `count(), arrange(), mutate(), group_by(), summarise(), left_join()`. 
+
+### Count e Arrange
+
+O verbo `count()` foi visto no exercício anterior. O que ele faz? Ele vai CONTAR quantos casos existem na visualização anterior, ou seja, se usarmos um banco, naquele banco. Ele contará quantos casos em determinada variável ou variáveis existem. Sua sintaxe se dá por `nome_do_objeto %>% count(nome_da_variavel)`. Vamos testá-la nos candidatos do município do Rio de Janeiro (codigo_tse == 60011):
+
+```{r count_bens}
+bens %>% 
+  filter(SG_UE == 60011) %>% 
+  count(DS_TIPO_BEM_CANDIDATO)
+```
+
+Ok, essa tabela está ruim pois a ordem de aparecimento é alfabética, em DS_TIPO_BEM_CANDIDATO. Vamos usar um verbo que reordena a partir de uma nova variável, o `arrange()`. O que ele faz? Ele pega a última visualização, ou seja, não mais o banco original, mas a tabela de contagem, e reordena uma variável escolhida, no caso do `count()`, a variável de nome __n__. Podemos fazer em ordem crescente ou decrescente. Se colocarmos `arrange(n)`, o *output* será em ordem do menor para o maior, e se colocarmos `arrange(-n)` será do maior para o menor. 
+
+```{r bens_arrange}
+bens %>% 
+  count(DS_TIPO_BEM_CANDIDATO) %>% 
+  arrange(-n) 
+```
+
+Com isso, qual são os 3 tipos de bens mais utilizados por candidatos e qual o tamanho deles?
+
+### Problemas
+
+Dêem um glimpse no banco de dados e observem algum problema encontrado por vocês na variável de VR_BEM_CANDIDATO. 
+
+```{r glimpse_bens}
+glimpse(bens)
+```
+
+
+### Mutate
+
+A função `mutate()` permite a mutação/alteração de uma variável A PARTIR de alguma condição (algo similar ao que vimos no filter, mas agora, com alteração). 
+
+Vamos trabalhar com um caso hipotético e depois com um caso real do banco de bens. Suponhamos que a gente tenha um banco da nossa turma que possui o nome de todos vocês, o gênero e o período, e quando for do Mestrado, isso também está constando na mesma variável do Período, categorizado como NA, pois não é graduação. Logo, temos algo similar a isso:
+
+```{r turma_generate}
+turma <- data.frame(
+  nome = c("Fulano", "Sicrana",  "Beltrana"),
+  periodo_grad = c(1, 5, NA),
+  genero = c("Masculino", "Feminino", "Feminino")
+)
+
+turma
+```
+
+Supondo que eu queira criar uma variável chamada `categoria`, que indicasse se a pessoa é Caloura, Veterana ou Mestranda, pra graduação. Como faríamos?
+
+```{r turma_mutate}
+turma %>% 
+  mutate(categoria = case_when(periodo_grad <= 2 & genero == "Masculino" ~ "Calouro",
+                               periodo_grad <= 2 & genero == "Feminino" ~ "Caloura",
+                               periodo_grad > 2 & genero == "Masculino" ~ "Veterano",
+                               periodo_grad > 2 & genero == "Feminino" ~ "Veterana",
+                               TRUE ~ "Mestrado"))
+```
+O que houve acima?
+
+### Resolvendo o problema do banco de bens 
+
+O problema em bens, como vocês devem ter reparado, é a presença de vírgula na variável e a sua categorização como "caractere". No R, o sistema decimal é dado por ponto, como usado na Europa e EUA, e não por vírgula. Logo, precisamos substituir por ponto e converter para numérico. Tentem entender o que acontecerá nas funções abaixo:
+
+```{r}
+bens_clean <- bens %>% 
+  mutate(VALOR_CLEAN = as.double(gsub(",", ".", VR_BEM_CANDIDATO)))
+```
+
+Apliquem um "summary" e vejam o que mudou.
+
+```{r}
+summary(bens_clean)
+```
+
+
+
+
+### Group_by e Summarise
+
+Existem, no R, funções de agrupamento, que são comumente utilizadas com funções de sumarização.
+
+Imaginemos a seguinte situação: se utilizarmos a função `mean(bens_clean$VALOR_CLEAN)`, obtemos o valor `r mean(bens_clean$VALOR_CLEAN)`, que é a média de todos os candidatos do estado do RJ. Mas e se quiséssemos a média por candidato? Aí usamos o `group_by()` junto com a função `summarise()`, que faz justamente isso: uma sumarização a partir de um agrupamento categórico. Vamos lá:
+
+```{r}
+bens_clean %>% 
+  group_by(SQ_CANDIDATO) %>% 
+  summarise(media_candidato = mean(VALOR_CLEAN))
+```
+Quais colunas temos agora? 
+
+Bom, toda média é burra. Médias não nos dizem nada (e são um bom palpite, mas que podem levar ao erro). Afinal, um candidato que tem uma casa de 5 milhões e uma frota de 20 Monzas, cada um no valor de 5 mil, teria uma média de 240 mil reais em bens, o que esconderia completamente a sua riqueza. Logo, a média não é, definitivamente, a melhor medida. Podemos somar outras funções, como mediana e desvio-padrão. 
+
+```{r}
+bens_clean <- bens_clean %>% 
+  group_by(SQ_CANDIDATO) %>% 
+  summarise(media_candidato = mean(VALOR_CLEAN, na.rm = T),
+            mediana_candidato = median(VALOR_CLEAN, na.rm = T),
+            desvio_padrao_candidato = sd(VALOR_CLEAN, na.rm = T),
+            soma_candidato = sum(VALOR_CLEAN, na.rm = T))
+
+bens_clean
+```
+Agora temos diversas medidas: todas elas, agregadas por candidato. 
+
+Façamos o mesmo, agora, com os votos. 
+
+```{r}
+votacao_agr <- votacao %>% 
+  group_by(NM_URNA_CANDIDATO, sequencial, SG_PARTIDO, DS_CARGO) %>% 
+  summarise(soma_votos = sum(QT_VOTOS_NOMINAIS, na.rm = T))
+```
+
+
+### _Joins
+
+Temos dois bancos: um com os votos e outro com os bens. Como juntar as duas informações? Primeiro, pensamos no que queremos: um banco, com os candidatos, seus respectivos sequenciais, seu partido (para motivos de controle), seu cargo, a soma total de seus votos e a soma de seus bens. Para isso, vamos usar a função denominada `left_join()`. O que ela faz? 
+
+Ela procura uma variável em comum entre dois bancos e junta os dois de acordo com essa variável. No caso, o que temos em comum? O sequencial! 
+
+Como usamos a função `left_`, mantemos como fixo o banco da esquerda e somamos a ele o que colocamos na direita. Existem outros `_joins`: `right_`, `semi_`, `full_`, `anti_` que não serão vistos nesse curso, mas é recomendado que vocês procurem a documentação de cada uma delas. 
+
+A junção se dá de forma simples: basta dizermos qual banco queremos juntar e a partir de qual variável. Se a variável não tiver o mesmo nome (nosso caso), dizemos como é o nome da variável no banco da esquerda e como é o nome no banco da direita, em equivalência. Vamos remover as variáveis também que não queremos, como a média, a mediana, e o desvio padrão. Além disso, alguns candidatos devem dar como NA, ou seja, sem valor: esses não tem bens declarados. Se não há bens, o valor é zero. 
+
+```{r}
+banco_completo <- votacao_agr %>% 
+  left_join(bens_clean, by = c("sequencial" = "SQ_CANDIDATO")) %>% 
+  select(-starts_with("media"), -desvio_padrao_candidato) %>% 
+  mutate(soma_candidato = ifelse(is.na(soma_candidato), 0, soma_candidato))
+
+banco_completo
+```
+
+## Gráficos
+
+Gráficos também são gerados pelo tidyverse, em seu pacote `ggplot2`. GGPlot significa: "Grammar of Graphics". O R tem seu próprio pacote nativo que gera gráficos, a partir da função `plot()`. Porém, o `plot()` é horrível, pouco intuitivo, pouco personalizável (ou pelo menos, não de forma simples e objetiva) e pouco flexível. Um exemplo:
+
+```{r echo=FALSE, warning=FALSE}
+hist(banco_completo$soma_candidato)
+ggplot(banco_completo, aes(x = soma_candidato))+
+  geom_histogram(bins = 15, fill = "deepskyblue", color = "black", size = 0.4)+
+  hrbrthemes::theme_ipsum_tw()+
+  labs(title = "Histograma da distribuição de bens entre candidatos",
+       subtitle = "No Rio de Janeiro, entre PT e PSL",
+       x = "Soma de bens", 
+       y = "Contagem")
+```
+### Sintaxe
+
+Como disse, o ggplot é uma gramática de gráficos, e como gramática, ele funciona por camadas. A sintaxe do ggplot pode ser vista da seguinte maneira:
+
+`ggplot(nome_do_banco, aes(variável X, variável Y)) + geom_GEOMA()`
+
+Ou seja, na primeira camada nós definimos as dimensões: eixo X, eixo Y, dentre outras, e na segunda camada (em diante) definimos as especificidades: os geomas (formas de gráficos, como barras, pontos, histograma, boxplot, etc), rótulos de título, subtítulo, eixos, tema do gráfico, dentre outros. 
+
+IMPORTANTE: enquanto em bancos de dados usados %>% como sinalizador de união e fluência de funções, aqui usamos +. Ou seja, dentro de gráficos não usamos %>% , apenas +. 
+
+Existe uma dezena de geomas e outras opções disponíveis, e veremos algumas aqui. Todas podem ser encontradas em [https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf](https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf). 
+
+### Gráfico de barras / colunas
+
+Suponhamos que a gente queira a média dos valores de bens entre os candidatos dos dois partidos que escolhemos. No meu caso, PT e PSL. Quem tem a maior média de bens? E quem tem a maior média de votos? Isso pode ser visto por um gráfico de barras ou colunas. Mas antes, precisamos gerar um banco com essas métricas. Lembrando que o que temos está agregado por candidato, mas não por partido, e precisamos justamente da agregação por partido.
+
+```{r}
+banco_completo %>%
+  group_by(SG_PARTIDO) %>%
+  summarise(media = mean(soma_candidato, na.rm = T)) %>%
+  ggplot(aes(x = SG_PARTIDO, 
+             y = media, 
+             fill = SG_PARTIDO)) +
+  geom_col(show.legend = F) +
+  scale_fill_manual(values = c("orange", "firebrick")) +
+  theme_minimal() +
+  labs(
+    title = "Média de bens entre candidatos",
+    subtitle = "PT e PSL do Rio de Janeiro",
+    x = "Partido",
+    y = "Média do valor de bens",
+    caption = "Fonte: TSE"
+  )
+```
+
+### Gráfico de dispersão (pontos)
+
+Como dito, uma média nos esconde muita coisa. Podemos fazer um gráfico de pontos para avaliar como isso se manifesta em cada caso. Aqui, não precisamos do caso agrupado por partido, bastando os casos individuais. Vamo comparar a média de bens com o total de votos. A justificativa é: será que candidatos que tem mais bens também tiveram mais votos? 
+
+```{r}
+banco_completo %>% 
+  filter(soma_votos < 50000) %>% 
+  ggplot(aes(x = soma_candidato, y = soma_votos, color = SG_PARTIDO))+
+  geom_point()+
+  scale_color_manual(values = c("orange", "firebrick"))+
+  theme_minimal()+
+  labs(color = "Partido",
+       title = "Votos x Bens",
+       subtitle = "Entre PT e PSL, no Rio de Janeiro",
+       x = "Valor total em bens",
+       y = "Total de votos",
+       caption = "Fonte: TSE")
+```
+
+### Histograma
+
+Histogramas mostram distribuições, não precisando de um eixo Y, dado que o eixo Y por si só já é a contagem de casos agregados naquela categoria. Vejamos a distribuição de votos. 
+
+```{r}
+banco_completo %>% 
+  filter(DS_CARGO == "Vereador") %>% 
+  ggplot(aes(x = soma_votos, fill = SG_PARTIDO))+
+  geom_histogram(position = "dodge", bins = 5)+
+  theme_minimal()+
+  scale_fill_manual(values = c("orange", "firebrick"))+
+  labs(title = "Distribuição de votos entre PT e PSL",
+       subtitle = "No Rio de Janeiro",
+       x = "Nº de votos", 
+       y = "Contagem", fill = "Partido")
+```
+
